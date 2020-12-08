@@ -11,7 +11,6 @@ namespace VermoegenPrototyp
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-
             //initialising investments
             Investment tesla = new Investment();
             tesla.Name = "Tesla";
@@ -20,37 +19,31 @@ namespace VermoegenPrototyp
 
             //user intro
             Console.WriteLine("type check or input");
-            Check();
-
-
-            //Console.WriteLine("absolute Tesla Rendite: " + tesla.RenditeBerechnen("abs") + "%");
-            //Console.WriteLine("absolute Lufthansa Rendite: " + lufth.RenditeBerechnen("abs") + "%");
-            //Console.WriteLine("wöchendliche Tesla Rendite: " + tesla.RenditeBerechnen("woech") + "%");
-            //Console.WriteLine("wöchendliche Lufthansa Rendite: " + tesla.RenditeBerechnen("woech") + "%");
+            WhichAction();
             Console.ReadKey();
 
         }
-        static void Check()
+        static void WhichAction()
         {
             string action = Convert.ToString(Console.ReadLine());
             switch (action)
             {
                 case "check":
-                    //check function
-                    Console.WriteLine("Check gets opened");
+                    Console.WriteLine("\nYour returns:");
+                    Console.WriteLine("\nINVESTMENT\tWEEKLY\tTOTAL");
+                    Console.WriteLine("MSCI World\t10%\t15%");
+                    Console.WriteLine("MSCI EM\t\t12%\t17%");
                     break;
                 case "input":
-                    //input function
-                    Console.WriteLine("Input gets opened");
+                    //Renditen eingeben
                     break;
                 default:
-                    Console.WriteLine("Please only type in a valid word.");
-                    Check();
+                    Console.WriteLine("Type in valid command. (check/input)");
+                    WhichAction();
                     break;
             }
         }
     }
-
     class Investment
     {
         //properties
@@ -76,7 +69,7 @@ namespace VermoegenPrototyp
                         absoluteRendite = ((AktuellerWert - Kaufwert) / AktuellerWert) * 100;
                         return absoluteRendite;
                     }
-                case "woech":
+                case "week":
                     decimal woechendlicheRendite;
                     decimal WertVor1Woche;
                     switch (Name)
