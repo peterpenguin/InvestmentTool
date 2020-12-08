@@ -17,7 +17,7 @@ namespace VermoegenPrototyp
             Console.WriteLine("type check or input");
             WhichAction();
             Console.ReadKey();
-
+            hihi
         }
         static void WhichAction()
         {
