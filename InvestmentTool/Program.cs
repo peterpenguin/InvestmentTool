@@ -11,11 +11,14 @@ namespace VermoegenPrototyp
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+            Investment tesla = new Investment("Tesla");
+            Investment lufth = new Investment("Lufthansa");
 
-
+            //IDEE: bei konstruktor array anlegen in welches namen reinkommen dann schleife um für jeden namen rendite auszugeben
             //user intro
-            Console.WriteLine("type check or input");
-            WhichAction();
+            //Console.WriteLine("type check or input");
+            //WhichAction();
+            Console.WriteLine("TESLA\nTotal return: " + tesla.TR + "%\nWeekly return: " + tesla.WR + "%");
             Console.ReadKey();
         }
         static void WhichAction()
@@ -26,14 +29,7 @@ namespace VermoegenPrototyp
             {
                 //switch case am ende auch besser programmieren mit weniger code
                 case "check":
-                    Investment tesla = new Investment("Tesla");
-                    Investment lufth = new Investment("Lufthansa");
-                    Console.WriteLine("\nYour returns:");
-                    Console.WriteLine("\nINVESTMENT\tWEEKLY\tTOTAL");
-                    //TESLA
-                    Console.WriteLine(tesla.Name + "\t" + tesla.RenditeBerechnen("week") + "%\t" + tesla.RenditeBerechnen("abs") + "%");
-                    //LUFTHANSA
-                    Console.WriteLine(lufth.Name + "\t" + lufth.RenditeBerechnen("week") + "%\t" + lufth.RenditeBerechnen("abs") + "%");
+                    //present returns
                     //whichaction noch einmal aufrufen mit einer if davor ob man noch was machen will
                     break;
                 case "input":
@@ -53,8 +49,8 @@ namespace VermoegenPrototyp
         public Investment(string _Name)
         {
             Name = _Name;
-            GetCurrent(Name);
-            GetBuyIn(Name);
+            GetPrices();
+            CalculateReturns();
         }
 
         //fields
@@ -62,51 +58,46 @@ namespace VermoegenPrototyp
         private decimal CurrentPrice;
         private decimal BuyInPrice;
         private decimal PriceAWeekAgo;
+        private decimal TotalReturn;
+        private decimal WeeklyReturn;
+
+        //properties
+        public decimal TR
+        {
+            get
+            {
+                return TotalReturn;
+            }
+            set
+            {
+                TotalReturn = value;
+            }
+        }
+        public decimal WR
+        {
+            get
+            {
+                return WeeklyReturn;
+            }
+            set
+            {
+                WeeklyReturn = value;
+            }
+        }
 
         //methods
-        private void GetCurrent(string title)
+        private void GetPrices()
         {
             string path = @"data\" + Name + ".txt";
             int rows = File.ReadLines(path).Count();
             CurrentPrice = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 1).Take(1).First());
+            BuyInPrice = Convert.ToDecimal(File.ReadLines(path).Skip(1).Take(1).First());
+            PriceAWeekAgo = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 3).Take(1).First());
         }
-        private void GetBuyIn(string title)
+        private void CalculateReturns()
         {
-
-        }
-
-        public decimal RenditeBerechnen(string Rendite)
-        {
-            switch (Rendite)
-            {
-                case "abs":
-                    decimal absoluteRendite;
-                    if (CurrentPrice - BuyInPrice < 0)
-                    {
-                        absoluteRendite = ((CurrentPrice - BuyInPrice) / BuyInPrice) * 100;
-                        return absoluteRendite;
-                    }
-                    else
-                    {
-                        absoluteRendite = ((CurrentPrice - BuyInPrice) / CurrentPrice) * 100;
-                        return absoluteRendite;
-                    }
-                case "week":
-                    decimal weeklyReturn;
-                    switch (Name)
-                    {
-                        case "Tesla":
-                            weeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
-                            return weeklyReturn;
-                        case "Lufthansa":
-                            weeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
-                            return weeklyReturn;
-                        default:
-                            return 404;
-                    }
-                default:
-                    return 404;
-            }
+            TotalReturn = ((CurrentPrice - BuyInPrice) / BuyInPrice) * 100;
+            WeeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
         }
     }
 }
