@@ -11,11 +11,7 @@ namespace VermoegenPrototyp
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            //initialising investments
-            Investment tesla = new Investment();
-            tesla.Name = "Tesla";
-            Investment lufth = new Investment();
-            lufth.Name = "Lufthansa";
+
 
             //user intro
             Console.WriteLine("type check or input");
@@ -26,12 +22,16 @@ namespace VermoegenPrototyp
         static void WhichAction()
         {
             string action = Convert.ToString(Console.ReadLine());
+            //initializing investments
+            Investment tesla = new Investment("Tesla");
+            Investment lufth = new Investment("Lufthansa");
             switch (action)
             {
                 case "check":
                     Console.WriteLine("\nYour returns:");
                     Console.WriteLine("\nINVESTMENT\tWEEKLY\tTOTAL");
-                    Console.WriteLine("MSCI World\t10%\t15%");
+                    //TESLA
+                    Console.WriteLine(tesla.Name + "\t" + tesla.RenditeBerechnen("week") + "10%\t15%");
                     Console.WriteLine("MSCI EM\t\t12%\t17%");
                     break;
                 case "input":
@@ -47,7 +47,11 @@ namespace VermoegenPrototyp
     class Investment
     {
         //properties
-        public string Name { get; set; }
+        private string Name { get; set; }
+        public Investment(string investmentName)
+        {
+            Name = investmentName;
+        }
         public decimal AktuellerWert { get; set; }
         public decimal Kaufwert { get; set; }
         public decimal WertVor1Woche { get; set; }
