@@ -31,8 +31,9 @@ namespace VermoegenPrototyp
                     Console.WriteLine("\nYour returns:");
                     Console.WriteLine("\nINVESTMENT\tWEEKLY\tTOTAL");
                     //TESLA
-                    Console.WriteLine(tesla.Name + "\t" + tesla.RenditeBerechnen("week") + "10%\t15%");
-                    Console.WriteLine("MSCI EM\t\t12%\t17%");
+                    Console.WriteLine(tesla.Name + "\t" + tesla.RenditeBerechnen("week") + "%\t" + tesla.RenditeBerechnen("abs") + "%");
+                    //LUFTHANSA
+                    Console.WriteLine(lufth.Name + "\t" + lufth.RenditeBerechnen("week") + "%\t" + lufth.RenditeBerechnen("abs") + "%");
                     break;
                 case "input":
                     //Renditen eingeben
@@ -47,7 +48,7 @@ namespace VermoegenPrototyp
     class Investment
     {
         //properties
-        private string Name { get; set; }
+        public string Name { get; set; }
         public Investment(string investmentName)
         {
             Name = investmentName;
