@@ -17,7 +17,6 @@ namespace VermoegenPrototyp
             Console.WriteLine("type check or input");
             WhichAction();
             Console.ReadKey();
-            hihi
         }
         static void WhichAction()
         {
@@ -36,7 +35,7 @@ namespace VermoegenPrototyp
                     Console.WriteLine(lufth.Name + "\t" + lufth.RenditeBerechnen("week") + "%\t" + lufth.RenditeBerechnen("abs") + "%");
                     break;
                 case "input":
-                    //Renditen eingeben
+                    //user input into txt file for every investment + dont forget date!!
                     break;
                 default:
                     Console.WriteLine("Type in valid command. (check/input)");
@@ -47,13 +46,42 @@ namespace VermoegenPrototyp
     }
     class Investment
     {
+        //fields
+        private decimal _CurrentPrice;
+
         //properties
         public string Name { get; set; }
         public Investment(string investmentName)
         {
             Name = investmentName;
         }
-        public decimal AktuellerWert { get; set; }
+        public decimal CurrentPrice
+        {
+            get
+            {
+                int rows;
+                decimal currentP;
+                switch(Name)
+                {
+                    case "Tesla":
+                        string _tesla = @"data\tesla.txt";
+                        rows = File.ReadLines(_tesla).Count();
+                        currentP = Convert.ToDecimal(File.ReadLines(_tesla).Skip(rows - 1).Take(1).First());
+                        return currentP;
+                    case "Lufthansa":
+                        string _lufth = @"data\lufthansa.txt";
+                        rows = File.ReadLines(_lufth).Count();
+                        currentP = Convert.ToDecimal(File.ReadLines(_lufth).Skip(rows - 1).Take(1).First());
+                        return currentP;
+                    default:
+                        return 404;
+                }
+            }
+            set
+            {
+                _CurrentPrice = value;
+            }
+        }
         public decimal Kaufwert { get; set; }
         public decimal WertVor1Woche { get; set; }
 
