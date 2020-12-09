@@ -11,17 +11,27 @@ namespace VermoegenPrototyp
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+            //comment
+            string path = @"data\Investments.txt";
+            File.WriteAllText(path, "");
+
+            //comment
             Investment tesla = new Investment("Tesla");
             Investment lufth = new Investment("Lufthansa");
 
+            //comment
+            string[] Names = File.ReadAllLines(path);
+            foreach(string element in Names)
+            {
+                Console.WriteLine(element);
+            }
             //IDEE: bei konstruktor array anlegen in welches namen reinkommen dann schleife um für jeden namen rendite auszugeben
             //user intro
             //Console.WriteLine("type check or input");
             //WhichAction();
-            Console.WriteLine("TESLA\nTotal return: " + tesla.TR + "%\nWeekly return: " + tesla.WR + "%");
             Console.ReadKey();
         }
-        static void WhichAction()
+        public void WhichAction()
         {
             string action = Convert.ToString(Console.ReadLine());
             //initializing investments
@@ -51,6 +61,7 @@ namespace VermoegenPrototyp
             Name = _Name;
             GetPrices();
             CalculateReturns();
+            AddNameToList(Name);
         }
 
         //fields
@@ -98,6 +109,12 @@ namespace VermoegenPrototyp
         {
             TotalReturn = ((CurrentPrice - BuyInPrice) / BuyInPrice) * 100;
             WeeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
+        }
+        private void AddNameToList(string title)
+        {
+            string path = @"data\Investments.txt";
+            File.AppendAllText(path, title);
+            File.AppendAllText(path, "\n");
         }
     }
 }
