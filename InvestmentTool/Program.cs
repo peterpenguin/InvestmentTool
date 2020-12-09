@@ -8,6 +8,16 @@ namespace VermoegenPrototyp
     {
         static void Main(string[] args)
         {
+            //TODO
+            //checking if files exist if not create one
+            //create child classes for p2p credits gold aso
+            //only return weeklyreturn when 3 prices exist - when 2 exist - return weeklyr = totalr
+            //only return total return when 2 prices exist
+            //input investments by asking for price of the investment + asking if something gor bought
+            //give the user the possibility to create an investment my asking name + type of investment + either quantity and price or weight + kgprice aso
+
+
+
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
