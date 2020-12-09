@@ -11,7 +11,7 @@ namespace VermoegenPrototyp
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            //comment
+            //clearing files
             string pathNames = @"data\Investments.txt";
             File.WriteAllText(pathNames, "");
             string pathWRs = @"data\WRs.txt";
@@ -19,45 +19,38 @@ namespace VermoegenPrototyp
             string pathTRs = @"data\TRs.txt";
             File.WriteAllText(pathTRs, "");
 
-            //comment
+            //init investments
             Investment tesla = new Investment("Tesla");
             Investment lufth = new Investment("Lufthansa");
             Investment etf = new Investment("MSCI World");
 
-            //comment
-            Console.WriteLine("Returns:\n");
-            Console.WriteLine("\t\tweekly\t\ttotal");
-            int rows = File.ReadLines(pathNames).Count();
-            string[] Names = File.ReadAllLines(pathNames);
-            string[] WRs = File.ReadAllLines(pathWRs);
-            string[] TRs = File.ReadAllLines(pathTRs);
-            Console.WriteLine(Names[0] + "\t\t" + Math.Round(Convert.ToDecimal(WRs[0]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[0]), 1) + "%");
-            for (int i = 1; i < rows; i++)
-            {
-                Console.WriteLine(Names[i] + "\t" + Math.Round(Convert.ToDecimal(WRs[i]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[i]), 1) + "%");
-            }
-            //string[] WReturns = 
-            //IDEE: bei konstruktor array anlegen in welches namen reinkommen dann schleife um für jeden namen rendite auszugeben
-            //user intro
-            //Console.WriteLine("type check or input");
-            //WhichAction();
-            Console.ReadKey();
+            //put in prices or check returns
+            Console.WriteLine("Type input or check");
+            WhichAction();
         }
-        public decimal WR(string Name)
-        {
-            
-            return 20;
-        }
-        public void WhichAction()
+        static void WhichAction()
         {
             string action = Convert.ToString(Console.ReadLine());
             //initializing investments
             switch (action)
             {
-                //switch case am ende auch besser programmieren mit weniger code
                 case "check":
-                    //present returns
-                    //whichaction noch einmal aufrufen mit einer if davor ob man noch was machen will
+                    string pathNames = @"data\Investments.txt";
+                    string pathWRs = @"data\WRs.txt";
+                    string pathTRs = @"data\TRs.txt";
+                    Console.WriteLine("-----\nReturns:\n");
+                    Console.WriteLine("\t\tweekly\t\ttotal");
+                    int rows = File.ReadLines(pathNames).Count();
+                    string[] Names = File.ReadAllLines(pathNames);
+                    string[] WRs = File.ReadAllLines(pathWRs);
+                    string[] TRs = File.ReadAllLines(pathTRs);
+                    Console.WriteLine(Names[0] + "\t\t" + Math.Round(Convert.ToDecimal(WRs[0]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[0]), 1) + "%");
+                    for (int i = 1; i < rows; i++)
+                    {
+                        Console.WriteLine(Names[i] + "\t" + Math.Round(Convert.ToDecimal(WRs[i]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[i]), 1) + "%");
+                    }
+                    Console.WriteLine("\nAnother action or close app? (type action/close)");
+                    AnotherAction();
                     break;
                 case "input":
                     //user input into txt file for every investment + dont forget date!!
@@ -66,6 +59,23 @@ namespace VermoegenPrototyp
                 default:
                     Console.WriteLine("Type in valid command. (check/input)");
                     WhichAction();
+                    break;
+            }
+        }
+        static void AnotherAction()
+        {
+            string decision = Convert.ToString(Console.ReadLine());
+            switch (decision)
+            {
+                case "action":
+                    Console.WriteLine("\nType input or check");
+                    WhichAction();
+                    break;
+                case "close":
+                    break;
+                default:
+                    Console.WriteLine("Type in valid command. (action/close)");
+                    AnotherAction();
                     break;
             }
         }
