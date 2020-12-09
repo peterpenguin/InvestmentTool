@@ -12,24 +12,41 @@ namespace VermoegenPrototyp
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             //comment
-            string path = @"data\Investments.txt";
-            File.WriteAllText(path, "");
+            string pathNames = @"data\Investments.txt";
+            File.WriteAllText(pathNames, "");
+            string pathWRs = @"data\WRs.txt";
+            File.WriteAllText(pathWRs, "");
+            string pathTRs = @"data\TRs.txt";
+            File.WriteAllText(pathTRs, "");
 
             //comment
             Investment tesla = new Investment("Tesla");
             Investment lufth = new Investment("Lufthansa");
+            Investment etf = new Investment("MSCI World");
 
             //comment
-            string[] Names = File.ReadAllLines(path);
-            foreach(string element in Names)
+            Console.WriteLine("Returns:\n");
+            Console.WriteLine("\t\tweekly\t\ttotal");
+            int rows = File.ReadLines(pathNames).Count();
+            string[] Names = File.ReadAllLines(pathNames);
+            string[] WRs = File.ReadAllLines(pathWRs);
+            string[] TRs = File.ReadAllLines(pathTRs);
+            Console.WriteLine(Names[0] + "\t\t" + Math.Round(Convert.ToDecimal(WRs[0]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[0]), 1) + "%");
+            for (int i = 1; i < rows; i++)
             {
-                Console.WriteLine(element);
+                Console.WriteLine(Names[i] + "\t" + Math.Round(Convert.ToDecimal(WRs[i]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[i]), 1) + "%");
             }
+            //string[] WReturns = 
             //IDEE: bei konstruktor array anlegen in welches namen reinkommen dann schleife um für jeden namen rendite auszugeben
             //user intro
             //Console.WriteLine("type check or input");
             //WhichAction();
             Console.ReadKey();
+        }
+        public decimal WR(string Name)
+        {
+            
+            return 20;
         }
         public void WhichAction()
         {
@@ -62,6 +79,19 @@ namespace VermoegenPrototyp
             GetPrices();
             CalculateReturns();
             AddNameToList(Name);
+            AddWeeklyReturn(WeeklyReturn);
+            AddTotalReturn(TotalReturn);
+        }
+
+        private void AddWeeklyReturn(decimal weeklyR)
+        {
+            string pathWRs = @"data\WRs.txt";
+            File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+        }
+        private void AddTotalReturn(decimal totalR)
+        {
+            string pathTRs = @"data\TRs.txt";
+            File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
         }
 
         //fields
@@ -99,6 +129,7 @@ namespace VermoegenPrototyp
         //methods
         private void GetPrices()
         {
+            //checken ob files existieren
             string path = @"data\" + Name + ".txt";
             int rows = File.ReadLines(path).Count();
             CurrentPrice = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 1).Take(1).First());
@@ -112,9 +143,9 @@ namespace VermoegenPrototyp
         }
         private void AddNameToList(string title)
         {
-            string path = @"data\Investments.txt";
-            File.AppendAllText(path, title);
-            File.AppendAllText(path, "\n");
+            string pathNames = @"data\Investments.txt";
+            File.AppendAllText(pathNames, title);
+            File.AppendAllText(pathNames, "\n");
         }
     }
 }
