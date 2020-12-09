@@ -9,25 +9,14 @@ namespace VermoegenPrototyp
         static void Main(string[] args)
         {
             //TODO
-            //checking if files exist if not create one
             //create child classes for p2p credits gold aso
             //only return weeklyreturn when 3 prices exist - when 2 exist - return weeklyr = totalr
             //only return total return when 2 prices exist
             //input investments by asking for price of the investment + asking if something gor bought
             //give the user the possibility to create an investment my asking name + type of investment + either quantity and price or weight + kgprice aso
 
-
-
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            //clearing files
-            string pathNames = @"data\Investments.txt";
-            File.WriteAllText(pathNames, "");
-            string pathWRs = @"data\WRs.txt";
-            File.WriteAllText(pathWRs, "");
-            string pathTRs = @"data\TRs.txt";
-            File.WriteAllText(pathTRs, "");
 
             //init investments
             Investment tesla = new Investment("Tesla");
@@ -103,17 +92,6 @@ namespace VermoegenPrototyp
             AddTotalReturn(TotalReturn);
         }
 
-        private void AddWeeklyReturn(decimal weeklyR)
-        {
-            string pathWRs = @"data\WRs.txt";
-            File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
-        }
-        private void AddTotalReturn(decimal totalR)
-        {
-            string pathTRs = @"data\TRs.txt";
-            File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
-        }
-
         //fields
         public string Name;
         private decimal CurrentPrice;
@@ -164,8 +142,45 @@ namespace VermoegenPrototyp
         private void AddNameToList(string title)
         {
             string pathNames = @"data\Investments.txt";
-            File.AppendAllText(pathNames, title);
-            File.AppendAllText(pathNames, "\n");
+            if (File.Exists(pathNames) == true)
+            {
+                File.AppendAllText(pathNames, title);
+                File.AppendAllText(pathNames, "\n");
+            }
+            else
+            {
+                File.Create(pathNames);
+                File.AppendAllText(pathNames, title);
+                File.AppendAllText(pathNames, "\n");
+            }
+        }
+        private void AddWeeklyReturn(decimal weeklyR)
+        {
+            string pathWRs = @"data\WRs.txt";
+            if (File.Exists(pathWRs) == true)
+            {
+                File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+            }
+            else
+            {
+                File.Create(pathWRs);
+                File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+            }
+
+        }
+        private void AddTotalReturn(decimal totalR)
+        {
+            string pathTRs = @"data\TRs.txt";
+            if (File.Exists(pathTRs) == true)
+            {
+                File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
+            }
+            else
+            {
+                File.Create(pathTRs);
+                File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
+            }
+
         }
     }
 }
