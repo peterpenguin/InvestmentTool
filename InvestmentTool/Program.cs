@@ -9,12 +9,13 @@ namespace VermoegenPrototyp
         static void Main(string[] args)
         {
             //TODO
+            //fix so that file existence gets checked when returns are displayed not before like currently
             //create child classes for p2p credits gold aso
             //only return weeklyreturn when 3 prices exist - when 2 exist - return weeklyr = totalr
             //only return total return when 2 prices exist
             //input investments by asking for price of the investment + asking if something gor bought
             //give the user the possibility to create an investment my asking name + type of investment + either quantity and price or weight + kgprice aso
-
+            
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -129,10 +130,35 @@ namespace VermoegenPrototyp
         {
             //checken ob files existieren
             string path = @"data\" + Name + ".txt";
-            int rows = File.ReadLines(path).Count();
-            CurrentPrice = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 1).Take(1).First());
-            BuyInPrice = Convert.ToDecimal(File.ReadLines(path).Skip(1).Take(1).First());
-            PriceAWeekAgo = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 3).Take(1).First());
+            if (File.Exists(path) == true)
+            {
+                int rows = File.ReadLines(path).Count();
+                CurrentPrice = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 1).Take(1).First());
+                BuyInPrice = Convert.ToDecimal(File.ReadLines(path).Skip(1).Take(1).First());
+                PriceAWeekAgo = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 3).Take(1).First());
+            }
+            else
+            {
+                Console.WriteLine("No prices for " + Name + " available. Want to input some prices or close the application? (input/close)");
+                Choice();
+            }
+        }
+        private void Choice()
+        {
+            string choice = Convert.ToString(Console.ReadLine());
+            switch (choice)
+            {
+                case "input":
+                    //open input method like Input(Name);
+                    break;
+                case "close":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Only type in valid commands. (input/close)");
+                    Choice();
+                    break;
+            }
         }
         private void CalculateReturns()
         {
