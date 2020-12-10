@@ -15,9 +15,15 @@ namespace VermoegenPrototyp
             //only return total return when 2 prices exist
             //input investments by asking for price of the investment + asking if something gor bought
             //give the user the possibility to create an investment my asking name + type of investment + either quantity and price or weight + kgprice aso
+            //if theres not enough data for a certain investment just output returns of investments which got enough data
             
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            //clear file
+            //also find possibility to clear tr.txt and wr.txt
+            string pathNames = @"data\Investments.txt";
+            File.WriteAllText(pathNames, "");
 
             //init investments
             Investment tesla = new Investment("Tesla");
@@ -35,20 +41,10 @@ namespace VermoegenPrototyp
             switch (action)
             {
                 case "check":
-                    string pathNames = @"data\Investments.txt";
-                    string pathWRs = @"data\WRs.txt";
-                    string pathTRs = @"data\TRs.txt";
-                    Console.WriteLine("-----\nReturns:\n");
-                    Console.WriteLine("\t\tweekly\t\ttotal");
-                    int rows = File.ReadLines(pathNames).Count();
-                    string[] Names = File.ReadAllLines(pathNames);
-                    string[] WRs = File.ReadAllLines(pathWRs);
-                    string[] TRs = File.ReadAllLines(pathTRs);
-                    Console.WriteLine(Names[0] + "\t\t" + Math.Round(Convert.ToDecimal(WRs[0]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[0]), 1) + "%");
-                    for (int i = 1; i < rows; i++)
-                    {
-                        Console.WriteLine(Names[i] + "\t" + Math.Round(Convert.ToDecimal(WRs[i]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[i]), 1) + "%");
-                    }
+                    //check if enough data
+                    //must be at least 4 rows = 2 prices
+                    CheckExistence();
+                    DisplayReturns();
                     Console.WriteLine("\nAnother action or close app? (type action/close)");
                     AnotherAction();
                     break;
@@ -57,9 +53,56 @@ namespace VermoegenPrototyp
                     //whichaction noch einmal aufrufen mit einer if davor ob man noch was machen will
                     break;
                 default:
-                    Console.WriteLine("Type in valid command. (check/input)");
+                    Console.WriteLine("\nType in valid command. (check/input)");
                     WhichAction();
                     break;
+            }
+        }
+        static void CheckExistence()
+        {
+            string pathNames = @"data\Investments.txt";
+            string[] Names = File.ReadAllLines(pathNames);
+            bool action = true;
+            for (int i = 0; i < Names.Length; i++)
+            {
+                string path = @"data\" + Names[i] + ".txt";
+                if (File.Exists(path) == true)
+                {
+                    int rows = File.ReadAllLines(path).Count();
+                    if (rows < 4)
+                    {
+                        Console.WriteLine("Not enough data for " + Names[i]);
+                        action = false;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No data for " + Names[i]);
+                    action = false;
+                }
+            }
+            if (action == false)
+            {
+                Console.WriteLine("\nAnother action or close app? (type action/close)");
+                AnotherAction();
+            }
+            Console.ReadLine();
+        }
+        static void DisplayReturns()
+        {
+            string pathNames = @"data\Investments.txt";
+            string pathWRs = @"data\WRs.txt";
+            string pathTRs = @"data\TRs.txt";
+            Console.WriteLine("-----\nReturns:\n");
+            Console.WriteLine("\t\tweekly\t\ttotal");
+            int rows = File.ReadLines(pathNames).Count();
+            string[] Names = File.ReadAllLines(pathNames);
+            string[] WRs = File.ReadAllLines(pathWRs);
+            string[] TRs = File.ReadAllLines(pathTRs);
+            Console.WriteLine(Names[0] + "\t\t" + Math.Round(Convert.ToDecimal(WRs[0]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[0]), 1) + "%");
+            for (int i = 1; i < rows; i++)
+            {
+                Console.WriteLine(Names[i] + "\t" + Math.Round(Convert.ToDecimal(WRs[i]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[i]), 1) + "%");
             }
         }
         static void AnotherAction()
@@ -101,69 +144,28 @@ namespace VermoegenPrototyp
         private decimal TotalReturn;
         private decimal WeeklyReturn;
 
-        //properties
-        public decimal TR
-        {
-            get
-            {
-                return TotalReturn;
-            }
-            set
-            {
-                TotalReturn = value;
-            }
-        }
-        public decimal WR
-        {
-            get
-            {
-                return WeeklyReturn;
-            }
-            set
-            {
-                WeeklyReturn = value;
-            }
-        }
-
         //methods
         private void GetPrices()
         {
-            //checken ob files existieren
             string path = @"data\" + Name + ".txt";
             if (File.Exists(path) == true)
             {
                 int rows = File.ReadLines(path).Count();
-                CurrentPrice = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 1).Take(1).First());
-                BuyInPrice = Convert.ToDecimal(File.ReadLines(path).Skip(1).Take(1).First());
-                PriceAWeekAgo = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 3).Take(1).First());
-            }
-            else
-            {
-                Console.WriteLine("No prices for " + Name + " available. Want to input some prices or close the application? (input/close)");
-                Choice();
-            }
-        }
-        private void Choice()
-        {
-            string choice = Convert.ToString(Console.ReadLine());
-            switch (choice)
-            {
-                case "input":
-                    //open input method like Input(Name);
-                    break;
-                case "close":
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.WriteLine("Only type in valid commands. (input/close)");
-                    Choice();
-                    break;
+                if (rows > 3)
+                {
+                    CurrentPrice = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 1).Take(1).First());
+                    BuyInPrice = Convert.ToDecimal(File.ReadLines(path).Skip(1).Take(1).First());
+                    PriceAWeekAgo = Convert.ToDecimal(File.ReadLines(path).Skip(rows - 3).Take(1).First());
+                }
             }
         }
         private void CalculateReturns()
         {
-            TotalReturn = ((CurrentPrice - BuyInPrice) / BuyInPrice) * 100;
-            WeeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
+            if (CurrentPrice != 0 && BuyInPrice != 0)
+            {
+                TotalReturn = ((CurrentPrice - BuyInPrice) / BuyInPrice) * 100;
+                WeeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
+            }
         }
         private void AddNameToList(string title)
         {
@@ -176,8 +178,7 @@ namespace VermoegenPrototyp
             else
             {
                 File.Create(pathNames);
-                File.AppendAllText(pathNames, title);
-                File.AppendAllText(pathNames, "\n");
+                AddNameToList(title);
             }
         }
         private void AddWeeklyReturn(decimal weeklyR)
