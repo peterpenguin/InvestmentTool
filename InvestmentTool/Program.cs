@@ -9,32 +9,40 @@ namespace VermoegenPrototyp
         static void Main(string[] args)
         {
             //TODO
-            //fix so that file existence gets checked when returns are displayed not before like currently
             //create child classes for p2p credits gold aso
-            //only return weeklyreturn when 3 prices exist - when 2 exist - return weeklyr = totalr
-            //only return total return when 2 prices exist
             //input investments by asking for price of the investment + asking if something gor bought
             //give the user the possibility to create an investment my asking name + type of investment + either quantity and price or weight + kgprice aso
-            //if theres not enough data for a certain investment just output returns of investments which got enough data
-            
+
             //UTF8 encoding for €
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            //clear file
-            //also find possibility to clear tr.txt and wr.txt
+            //.txt files get cleared
+            ClearFiles();
+
+            //initialize investments
+            InitInv();
+
+            //user intro (outsorce to static method)
+            Console.WriteLine("Type input or check");
+            InputOrCheck();
+        }
+        static void ClearFiles()
+        {
             string pathNames = @"data\Investments.txt";
             File.WriteAllText(pathNames, "");
-
-            //init investments
+            string pathWR = @"data\WRs.txt";
+            File.WriteAllText(pathWR, "");
+            string pathTR = @"data\TRs.txt";
+            File.WriteAllText(pathTR, "");
+        }
+        static void InitInv()
+        {
             Investment tesla = new Investment("Tesla");
             Investment lufth = new Investment("Lufthansa");
             Investment etf = new Investment("MSCI World");
-
-            //put in prices or check returns
-            Console.WriteLine("Type input or check");
-            WhichAction();
+            Stock apple = new Stock("Apple");
         }
-        static void WhichAction()
+        static void InputOrCheck()
         {
             string action = Convert.ToString(Console.ReadLine());
             //initializing investments
@@ -46,7 +54,7 @@ namespace VermoegenPrototyp
                     CheckExistence();
                     DisplayReturns();
                     Console.WriteLine("\nAnother action or close app? (type action/close)");
-                    AnotherAction();
+                    ActionOrClose();
                     break;
                 case "input":
                     //user input into txt file for every investment + dont forget date!!
@@ -54,7 +62,7 @@ namespace VermoegenPrototyp
                     break;
                 default:
                     Console.WriteLine("\nType in valid command. (check/input)");
-                    WhichAction();
+                    InputOrCheck();
                     break;
             }
         }
@@ -83,10 +91,27 @@ namespace VermoegenPrototyp
             }
             if (action == false)
             {
-                Console.WriteLine("\nAnother action or close app? (type action/close)");
-                AnotherAction();
+                Console.WriteLine("\nWant to input data or see returns for investments with enough data? (input/returns)");
+                AvaibleReturns();
             }
             Console.ReadLine();
+        }
+        static void AvaibleReturns()
+        {
+            string decision = Convert.ToString(Console.ReadLine());
+            switch (decision)
+            {
+                case "input":
+                    //input method
+                    break;
+                case "returns":
+                    DisplayReturns();
+                    break;
+                default:
+                    Console.WriteLine("Type in valid command. (input/returns)");
+                    AvaibleReturns();
+                    break;
+            }
         }
         static void DisplayReturns()
         {
@@ -99,26 +124,59 @@ namespace VermoegenPrototyp
             string[] Names = File.ReadAllLines(pathNames);
             string[] WRs = File.ReadAllLines(pathWRs);
             string[] TRs = File.ReadAllLines(pathTRs);
-            Console.WriteLine(Names[0] + "\t\t" + Math.Round(Convert.ToDecimal(WRs[0]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[0]), 1) + "%");
+            Console.WriteLine(Names[0] + "\t\t" + Round(WRs[0]) + "\t\t" + Round(TRs[0]));
             for (int i = 1; i < rows; i++)
             {
-                Console.WriteLine(Names[i] + "\t" + Math.Round(Convert.ToDecimal(WRs[i]), 1) + "%\t\t" + Math.Round(Convert.ToDecimal(TRs[i]), 1) + "%");
+                //check how long the name is when its to short add some leerzeichen then add tesla to the for loop
+                Console.WriteLine(Names[i] + "\t" + Round(WRs[i]) + "\t\t" + Round(TRs[i]));
             }
         }
-        static void AnotherAction()
+        static string Round(string number)
+        {
+            if (number.Contains("/") == true)
+            {
+                return "/";
+            }
+            else
+            {
+                decimal rounded = Math.Round(Convert.ToDecimal(number), 1);
+                string stringed = Convert.ToString(rounded);
+                string finished = stringed + "%";
+                return finished;
+            }
+        }
+        static void InputOrClose()
+        {
+            string decision = Convert.ToString(Console.ReadLine());
+            switch (decision)
+            {
+                case "input":
+                    //input method
+                    break;
+                case "close":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Type in valid command. (action/close)");
+                    ActionOrClose();
+                    break;
+            }
+        }
+        static void ActionOrClose()
         {
             string decision = Convert.ToString(Console.ReadLine());
             switch (decision)
             {
                 case "action":
                     Console.WriteLine("\nType input or check");
-                    WhichAction();
+                    InputOrCheck();
                     break;
                 case "close":
+                    Environment.Exit(0);
                     break;
                 default:
                     Console.WriteLine("Type in valid command. (action/close)");
-                    AnotherAction();
+                    ActionOrClose();
                     break;
             }
         }
@@ -186,12 +244,27 @@ namespace VermoegenPrototyp
             string pathWRs = @"data\WRs.txt";
             if (File.Exists(pathWRs) == true)
             {
-                File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+                if (CurrentPrice != 0 && BuyInPrice != 0 && PriceAWeekAgo != 0)
+                {
+                    File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+                }
+                else
+                {
+                    File.AppendAllText(pathWRs, "/\n");
+                }
             }
             else
             {
-                File.Create(pathWRs);
-                File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+                if (CurrentPrice != 0 && BuyInPrice != 0 && PriceAWeekAgo != 0)
+                {
+                    File.Create(pathWRs);
+                    File.AppendAllText(pathWRs, Convert.ToString(weeklyR) + "\n");
+                }
+                else
+                {
+                    File.Create(pathWRs);
+                    File.AppendAllText(pathWRs, "/\n");
+                }
             }
 
         }
@@ -200,14 +273,58 @@ namespace VermoegenPrototyp
             string pathTRs = @"data\TRs.txt";
             if (File.Exists(pathTRs) == true)
             {
-                File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
+                if (CurrentPrice != 0 && BuyInPrice != 0 && PriceAWeekAgo != 0)
+                {
+                    File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
+                }
+                else
+                {
+                    File.AppendAllText(pathTRs, "/\n");
+                }
             }
             else
             {
-                File.Create(pathTRs);
-                File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
+                if (CurrentPrice != 0 && BuyInPrice != 0 && PriceAWeekAgo != 0)
+                {
+                    File.Create(pathTRs);
+                    File.AppendAllText(pathTRs, Convert.ToString(totalR) + "\n");
+                }
+                else
+                {
+                    File.Create(pathTRs);
+                    File.AppendAllText(pathTRs, "/\n");
+                }
             }
 
         }
+    }
+    class Stock : Investment
+    {
+        //additional constructor
+        public Stock (string _Name) : base(_Name)
+        {
+            //additional constructor statements
+
+        }
+
+        //fields
+        //fields specific for stonks
+
+        //methods
+        //methods specific for stonks
+
+    }
+    class PreciousMetal : Investment
+    {
+        public PreciousMetal (string _Name) : base (_Name)
+        {
+            //additional constructor statements
+        }
+        
+        //fields
+        //fields specific for metals
+
+        //methods
+        //methods specific for metals
     }
 }
