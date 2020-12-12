@@ -10,7 +10,7 @@ namespace VermoegenPrototyp
         {
             //TODO
             //create child classes for p2p credits gold aso
-            //input investments by asking for price of the investment + asking if something gor bought
+            //input investments by asking for price of the investment + asking if something gets bought
             //give the user the possibility to create an investment my asking name + type of investment + either quantity and price or weight + kgprice aso
 
             //UTF8 encoding for €
@@ -28,19 +28,48 @@ namespace VermoegenPrototyp
         }
         static void ClearFiles()
         {
+            //am Ende für alle vererbten Klassen machen
             string pathNames = @"data\Investments.txt";
-            File.WriteAllText(pathNames, "");
+            if (File.Exists(pathNames) == true)
+            {
+                File.WriteAllText(pathNames, "");
+            }
+            else
+            {
+                File.Create(pathNames);
+                File.WriteAllText(pathNames, "");
+            }
             string pathWR = @"data\WRs.txt";
-            File.WriteAllText(pathWR, "");
+            if (File.Exists(pathWR) == true)
+            {
+                File.WriteAllText(pathWR, "");
+            }
+            else
+            {
+                File.Create(pathWR);
+                File.WriteAllText(pathWR, "");
+            }
             string pathTR = @"data\TRs.txt";
-            File.WriteAllText(pathTR, "");
+            if (File.Exists(pathTR) == true)
+            {
+                File.WriteAllText(pathTR, "");
+            }
+            else
+            {
+                File.Create(pathTR);
+                File.WriteAllText(pathTR, "");
+            }
         }
         static void InitInv()
         {
+            //stocks
             Investment tesla = new Investment("Tesla");
             Investment lufth = new Investment("Lufthansa");
-            Investment etf = new Investment("MSCI World");
             Stock apple = new Stock("Apple");
+
+            //precious metals
+            PreciousMetal gold = new PreciousMetal("Gold");
+            PreciousMetal silver = new PreciousMetal("Silber");
         }
         static void InputOrCheck()
         {
@@ -189,7 +218,6 @@ namespace VermoegenPrototyp
             Name = _Name;
             GetPrices();
             CalculateReturns();
-            AddNameToList(Name);
             AddWeeklyReturn(WeeklyReturn);
             AddTotalReturn(TotalReturn);
         }
@@ -223,20 +251,6 @@ namespace VermoegenPrototyp
             {
                 TotalReturn = ((CurrentPrice - BuyInPrice) / BuyInPrice) * 100;
                 WeeklyReturn = ((CurrentPrice - PriceAWeekAgo) / PriceAWeekAgo) * 100;
-            }
-        }
-        private void AddNameToList(string title)
-        {
-            string pathNames = @"data\Investments.txt";
-            if (File.Exists(pathNames) == true)
-            {
-                File.AppendAllText(pathNames, title);
-                File.AppendAllText(pathNames, "\n");
-            }
-            else
-            {
-                File.Create(pathNames);
-                AddNameToList(title);
             }
         }
         private void AddWeeklyReturn(decimal weeklyR)
@@ -303,7 +317,7 @@ namespace VermoegenPrototyp
         //additional constructor
         public Stock (string _Name) : base(_Name)
         {
-            //additional constructor statements
+            AddNameToList(Name);
 
         }
 
@@ -311,20 +325,47 @@ namespace VermoegenPrototyp
         //fields specific for stonks
 
         //methods
-        //methods specific for stonks
-
+        private void AddNameToList(string stock)
+        {
+            string pathNames = @"data\stocks.txt";
+            if (File.Exists(pathNames) == true)
+            {
+                File.AppendAllText(pathNames, stock);
+                File.AppendAllText(pathNames, "\n");
+            }
+            else
+            {
+                File.Create(pathNames);
+                File.AppendAllText(pathNames, stock);
+                File.AppendAllText(pathNames, "\n");
+            }
+        }
     }
     class PreciousMetal : Investment
     {
         public PreciousMetal (string _Name) : base (_Name)
         {
-            //additional constructor statements
+            AddNameToList(Name);
         }
-        
+
         //fields
         //fields specific for metals
 
         //methods
-        //methods specific for metals
+        private void AddNameToList(string metal)
+        {
+            string pathNames = @"data\preciousMetals.txt";
+            bool existence = File.Exists(pathNames);
+            if (existence == true)
+            {
+                File.AppendAllText(pathNames, metal);
+                File.AppendAllText(pathNames, "\n");
+            }
+            else
+            {
+                File.Create(pathNames);
+                AddNameToList(metal);
+            }
+        }
     }
 }
